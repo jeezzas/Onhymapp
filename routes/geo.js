@@ -29,7 +29,7 @@ router.post('/', (req,res, next)=>{
 })
 
 //get Geo by ID
-router.get("/find", async(req, res, next) => {
+router.post("/find", async(req, res, next) => {
     const nom = req.body.nomEntite;
     const entiteId= await Entite.findOne({nomEntite : nom}, "_id");
 

@@ -51,10 +51,11 @@ export default function AllDomaines() {
     const [currentDomaine, setCurrentDomaine] = useState(null);
     const [geoList, SetGeoList] = useState(false);
     const [open, setOpen] = useState(false);
+
     const handleOpen = (domaine) => {
       setCurrentDomaine(domaine);
       setOpen(true);
-      console.log(currentDomaine)
+      console.log(domaine)
     }
     const handleClose = () => {setOpen(false);
       setCurrentDomaine(null)}
@@ -96,7 +97,7 @@ export default function AllDomaines() {
         <TableBody>
             {domaines.map(domaine=>{
               return(
-              <TableRow key={domaine._id} hover onClick={handleOpen}>
+              <TableRow key={domaine._id} hover onClick={()=>handleOpen(domaine)}>
                   <TableCell/>
                   <TableCell>{domaine.nDomaine}</TableCell>
                   <TableCell >{domaine.typeDm}</TableCell>
@@ -118,23 +119,38 @@ export default function AllDomaines() {
                   aria-describedby="modal-modal-description"
                 >
                     <List
-                    
+
                       sx={style}
                       component="nav"
                       aria-labelledby="nested-list-subheader"
                       subheader={     
                         <ListSubheader component="div" id="nested-list-subheader">
-                          Nested List Items
+                          Domaine  : {currentDomaine.nDomaine}
                         </ListSubheader>
                       }
                       >
                         <ListItem>                      
-                            <ListItemText primary="Carte Topographique" />
+                            <Typography  color="body1">Type : </Typography>
+                           <Typography  color="body2  " ml={1}>{currentDomaine.typeDm}</Typography> 
+                        </ListItem>
+                        <ListItem>                      
+                            <Typography  color="body1">Condition : </Typography>
+                           <Typography  color="body2  " ml={1}>{currentDomaine.conditionDm}</Typography> 
+                        </ListItem>
+                        <ListItem>                      
+                            <Typography  color="body1" > Etat : </Typography>
+                           <Typography  color="body2  "  ml={1}>{currentDomaine.geologue[0].nMat}</Typography> 
+                        </ListItem>
+                        <ListItem>                      
+                            <Typography  color="body1">Date d'Institution : </Typography>
+                           <Typography  color="body2  " ml={1}><Moment format="DD/MM/YYYY">{currentDomaine.dateInstitu}</Moment></Typography> 
+                        </ListItem>
+                        <ListItem>                      
+                            <Typography  color="body1">Date d'Echeance : </Typography>
+                           <Typography  color="body2  " ml={1}><Moment format="DD/MM/YYYY">{currentDomaine.dateEcheance}</Moment></Typography> 
                         </ListItem>
                       
-                        <ListItem>                      
-                            <ListItemText primary="Carte Topographique" />
-                        </ListItem>
+                     
 
                       <ListItemButton onClick={handleClick}>
                         <ListItemText primary="Geologue" />

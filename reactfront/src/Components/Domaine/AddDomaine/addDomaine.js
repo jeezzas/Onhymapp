@@ -84,18 +84,17 @@ export default function addDomaine() {
   const [coordonneeX, setCoordonneeX] = useState('');
   const [coordonneeY, setCoordonneeY] = useState('');
   const [carteTopo, setCarteTopo] = useState('');
-  const [entiteAdm, setEntiteAdm] = useState('');
-  const [geologue, setGeologue] = useState([]);
+  const [entiteAdm, setEntiteAdm] = useState("Metaux precieux");
+  const [geologue, setGeologue] = useState(null);
   const [substance, setSubstance] = useState([]);
   const [geos, setGeos] = useState([]);
-  const [subs, setSubs] = useState([]);
+  // const [subs, setSubs] = useState([]);
 
   useEffect(()=>{
     try{
-      Axios.get('http://localhost:3000/geologue/find',
-      {
-        nomEntite : 'Metaux de base'
-      }).then((response)=>{
+      Axios.post('http://localhost:3000/geologue/find',
+      { nomEntite : entiteAdm}
+    ).then((response)=>{
         
         setGeos(response.data);
         console.log(response.data);
@@ -103,28 +102,13 @@ export default function addDomaine() {
     } catch(err){
       console.log(err);
     }
-    }
-  ,[entiteAdm])
+    },[entiteAdm]
+  )
 
-  useEffect(()=>{
-    try{
-      Axios.get('http://localhost:3000/substance/find',
-      {
-        nomEntite : entiteAdm
-      }).then((response)=>{
-        
-        setSubs(response.data);
-        console.log(response.data);
-      });
-    } catch(err){
-      console.log(err);
-    }
-    }
-  ,[entiteAdm])
 
 
   const handleNDomaine=(e)=>{
-          setNdomaine(e.target.value);
+    setNdomaine(e.target.value);
   }
   const handleTypeDm=(e)=>{
     setTypeDm(e.target.value);
@@ -151,23 +135,18 @@ export default function addDomaine() {
     setEntiteAdm(e.target.value);
   }
   const handleGeologue=(e)=>{
-    const {
-      target: { value },
-    } = e;
-    setGeologue(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
+        setGeologue(e.target.value)
   };
-  const handleSubstance=(e)=>{
-    const {
-      target: { value },
-    } = e;
-    setSubstance(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
+
+  // const handleSubstance=(e)=>{
+  //   const {
+  //     target: { value },
+  //   } = e;
+  //   setSubstance(
+  //     // On autofill we get a stringified value.
+  //     typeof value === 'string' ? value.split(',') : value,
+  //   );
+  // };
 
 
 
@@ -461,15 +440,14 @@ export default function addDomaine() {
                 <FormControl fullWidth>
                   <InputLabel id="geologueLabel">Geologue</InputLabel>
                   <Select
-                    labelId="geologueLabel"
+                     labelId="geologueLabel"
                     id="geologue"
-                    multiple
-                    input={<OutlinedInput label="Tag" />}
+                    defaultValue=''
                     value={geologue}
-                    defaultValue=""
-                    label="Geologue"
+                    
+                    label="Condition"
                     {...register("geologue")}
-                    onChange={handleGeologue}
+                    onChange={()=>handleGeologue(e)}
                   >
                     {geos.map((g)=>{
                       ( <MenuItem key={g._id} value={g.nMat}>{g.nMat}</MenuItem>)
@@ -491,7 +469,7 @@ export default function addDomaine() {
               </Typography>
               </Grid>
               }
-               {entiteAdm &&  
+               {/* {entiteAdm &&  
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel id="conditionDmLabel">Substance</InputLabel>
@@ -523,7 +501,7 @@ export default function addDomaine() {
                   {errors.Substance?.message}
               </Typography>
               </Grid>
-              }
+              } */}
 
               <Grid container spacing={2} ml={81}>
                       <Grid item>

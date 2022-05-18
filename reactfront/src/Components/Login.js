@@ -74,6 +74,7 @@ export default function Login() {
             backgroundColor: '#e0e0e0'
           }}
         >
+
         <Box
         component="img"
         sx={{
@@ -83,7 +84,7 @@ export default function Login() {
           width: 450,
       
         }}
-        alt="The house from the offer."
+        alt="onhym"
         src={process.env.PUBLIC_URL+"images/onhymlogo2.png"}
       />
         <Typography variant="h4" color="initial"
