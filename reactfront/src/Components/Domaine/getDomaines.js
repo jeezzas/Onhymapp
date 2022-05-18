@@ -36,7 +36,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 600,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -48,8 +48,9 @@ const style = {
 export default function AllDomaines() {
 
     const [domaines, setDomaines] = useState([]);
+    const [geologueList, setGeologueList] = useState([]);
     const [currentDomaine, setCurrentDomaine] = useState(null);
-    const [geoList, SetGeoList] = useState(false);
+    const [geoItems, SetGeoItems] = useState(false);
     const [open, setOpen] = useState(false);
 
     const handleOpen = (domaine) => {
@@ -61,7 +62,8 @@ export default function AllDomaines() {
       setCurrentDomaine(null)}
 
       const handleClick = () => {
-        SetGeoList(!geoList);
+        SetGeoItems(!geoItems);
+        
       };
 
     useEffect(()=>{   
@@ -139,7 +141,7 @@ export default function AllDomaines() {
                         </ListItem>
                         <ListItem>                      
                             <Typography  color="body1" > Etat : </Typography>
-                           <Typography  color="body2  "  ml={1}>{currentDomaine.geologue[0].nMat}</Typography> 
+                           <Typography  color="body2  "  ml={1}>{currentDomaine.etatDm}</Typography> 
                         </ListItem>
                         <ListItem>                      
                             <Typography  color="body1">Date d'Institution : </Typography>
@@ -149,15 +151,21 @@ export default function AllDomaines() {
                             <Typography  color="body1">Date d'Echeance : </Typography>
                            <Typography  color="body2  " ml={1}><Moment format="DD/MM/YYYY">{currentDomaine.dateEcheance}</Moment></Typography> 
                         </ListItem>
-                      
-                     
-
+                        <ListItem>                      
+                            <Typography  color="body1">Carte Topographique : </Typography>
+                           <Typography  color="body2  " ml={1}>{currentDomaine.carteTopo}</Typography> 
+                        </ListItem>
+                        <ListItem>                      
+                            <Typography  color="body1">Coordonnées : </Typography>             
+                            <Typography  color="body2" ml={1}>X = "{currentDomaine.coordonnees.coordinates[0]}" ,</Typography> 
+                            <Typography  color="body2" ml={1}>Y ="{currentDomaine.coordonnees.coordinates[1]}" </Typography> 
+                        </ListItem>
                       <ListItemButton onClick={handleClick}>
                         <ListItemText primary="Geologue" />
-                        {geoList ? <ExpandLess /> : <ExpandMore />}
+                        {geoItems ? <ExpandLess /> : <ExpandMore />}
                       </ListItemButton>
-                      <Collapse in={geoList} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding  ml={20  }>
+                      <Collapse in={geoItems} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding  ml={20 }>
                             <ListItem>                      
                             <ListItemText primary="Carte Topographique" />
                            </ListItem>

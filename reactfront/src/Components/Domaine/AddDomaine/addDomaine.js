@@ -84,15 +84,16 @@ export default function addDomaine() {
   const [coordonneeX, setCoordonneeX] = useState('');
   const [coordonneeY, setCoordonneeY] = useState('');
   const [carteTopo, setCarteTopo] = useState('');
-  const [entiteAdm, setEntiteAdm] = useState("Metaux precieux");
-  const [geologue, setGeologue] = useState(null);
+  const [entiteAdm, setEntiteAdm] = useState(null);
+  const [geologue, setGeologue] = useState('');
   const [substance, setSubstance] = useState([]);
   const [geos, setGeos] = useState([]);
   // const [subs, setSubs] = useState([]);
 
   useEffect(()=>{
+    if(entiteAdm){
     try{
-      Axios.post('http://localhost:3000/geologue/find',
+      Axios.post('http://localhost:3000/geologue/findbyentite',
       { nomEntite : entiteAdm}
     ).then((response)=>{
         
@@ -102,6 +103,7 @@ export default function addDomaine() {
     } catch(err){
       console.log(err);
     }
+  }
     },[entiteAdm]
   )
 
@@ -132,9 +134,11 @@ export default function addDomaine() {
     setCoordonneeY(e.target.value);
   }
   const handleEntiteAdm=(e)=>{
+
     setEntiteAdm(e.target.value);
   }
   const handleGeologue=(e)=>{
+
         setGeologue(e.target.value)
   };
 
@@ -156,7 +160,6 @@ export default function addDomaine() {
     console.log(errors);
       
   }
-  
 
   return (
     <ThemeProvider theme={theme}>
@@ -447,13 +450,10 @@ export default function addDomaine() {
                     
                     label="Condition"
                     {...register("geologue")}
-                    onChange={()=>handleGeologue(e)}
+                    onChange={(e)=>{
+                      handleGeologue(e)}}
                   >
-                    {geos.map((g)=>{
-                      ( <MenuItem key={g._id} value={g.nMat}>{g.nMat}</MenuItem>)
-                        
-                    })}
-                   
+                    {geos.map(g=>(<MenuItem key={g._id} value={g.nMat}>{g.nMat}</MenuItem>))}
                   </Select>
                 </FormControl>
                 <Typography variant="caption" 
