@@ -5,19 +5,16 @@ const Domaine = require("../models/domaine_minier");
 const verifyToken = require("./verifyToken");
 
 
-
 //GET Domaine
 router.get('/', (req,res, next)=>{
-    Domaine.find().exec().
+    Domaine.find().sort('-createdAt').exec().
     then(docs => {
-      console.log(docs);
-      //   if (docs.length >= 0) {
+        if (docs.length >= 0) {
       res.status(200).json(docs);
-      //   } else {
-      //       res.status(404).json({
-        //       });
-      //   }
-        //           message: 'No entries found'
+        } else {
+            res.status(404).json({
+              });
+        }
     })
     .catch(err => {
       console.log(err);
@@ -42,9 +39,10 @@ router.post('/',(req,res, next)=>{
         geologue : req.body.geologue,
         carteTopo : req.body.carteTopo,
         substance : req.body.substance,
-        typeDm : req.body.typeDm
-        
+        typeDm : req.body.typeDm,        
     });
+    domaine.createdAt;
+    domaine.updatedAt;
     domaine.save().
     then(result=>{
         console.log(result)

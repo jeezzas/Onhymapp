@@ -25,7 +25,7 @@ router.post('/', (req,res, next)=>{
 })
 
 //get subs by ID
-router.get("/find", async(req, res, next) => {
+router.post("/find", async(req, res, next) => {
     const nom = req.body.nomEntite;
     const entiteId= await Entite.findOne({nomEntite : nom}, "_id");
 
@@ -48,6 +48,30 @@ router.get("/find", async(req, res, next) => {
   });
 
 
-
+  router.post("/findManySubs", async(req, res, next) => {
+    const ids = req.body.ids;
+    var substances=[];
+    await ids.forEach(id => {
+       Substance.findById(id).exec().then(doc=>{
+        if (doc) {
+          if(substances.length != ids.length)
+          substances.push(doc);
+          if(substances.length == ids.length){      
+           res.status(200).json(substances);
+          }
+        }
+       else {
+        res
+          .status(404)
+          .json({ message: "No valid entry found for provided ID" });
+      }
+        
+      }).catch(err => {
+        console.log(err);
+      });
+      })
+    
+  });
+  
 
 module.exports = router;

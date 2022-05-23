@@ -26,7 +26,7 @@ export default function Login() {
  
   React.useEffect(()=>{
     if(localStorage.getItem('@token')){
-      navigate('/home', { replace : true});
+      navigate('/home',{ replace : true});
 
     }
   })
@@ -115,7 +115,7 @@ export default function Login() {
             <Typography component="h1" variant="h5">
               Authentification
             </Typography>
-            <Box component="form" noValidate  sx={{ mt: 1 }} onSubmit={handleSubmit(handleSubmitting)}>
+            <Box component="form" noValidate  sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
                 required
@@ -171,6 +171,7 @@ export default function Login() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                onClick={handleSubmit(handleSubmitting)}
               >
                 Se connecter
               </Button>

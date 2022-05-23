@@ -2,71 +2,62 @@ import * as React from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import Divider from '@mui/material/Divider';
 
-export const mainListItems = (
+import Logout from '../Logout';
+import { useNavigate } from 'react-router-dom';
+
+
+
+
+
+export default function MainListItems(){
+  const navigate = useNavigate();
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpenL = () => setOpen(true);
+  const handleCloseL = () => setOpen(false);
+return(
   <React.Fragment>
-    <ListItemButton>
+    <ListItemButton onClick={()=>navigate('/home')}>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton onClick={()=>navigate('/addDomaine')}>
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <AddCircleOutlineIcon />
       </ListItemIcon>
-      <ListItemText primary="Orders" />
+      <ListItemText primary="Ajouter domaine" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton onClick={()=>navigate('/allDomaines')}>
       <ListItemIcon>
-        <PeopleIcon />
+        <ListAltIcon />
       </ListItemIcon>
-      <ListItemText primary="Customers" />
+      <ListItemText primary="Liste domaines" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
-      <ListItemText primary="Reports" />
+      <ListItemText primary="Rapports" />
     </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
-    </ListItemButton>
-  </React.Fragment>
-);
+    <Divider variant="middle" />
+            <ListItemButton onClick={handleOpenL}>
+            <ListItemIcon>
+            <LogoutIcon color='error'/> 
+             </ListItemIcon >
+            <ListItemText primary="Disconnect" sx={{ color : 'danger'}}/>
+            </ListItemButton>
+            <Logout open={open} handleClose={handleCloseL}/>
 
-export const secondaryListItems = (
-  <React.Fragment>
-    <ListSubheader component="div" inset>
-      Saved reports
-    </ListSubheader>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
-    </ListItemButton>
   </React.Fragment>
 );
+}

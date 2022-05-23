@@ -22,7 +22,8 @@ import { useForm } from "react-hook-form";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Axios from 'axios';
-
+import { useTheme } from '@mui/material/styles';
+import Navbar from '../../NavBar';
 const theme = createTheme();
 
 const types = [
@@ -73,7 +74,34 @@ const entites = [
 
 
 
+function getStyles(item, List, theme) {
+  return {
+    fontWeight:
+      List.indexOf(item) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
+
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+
+
 export default function addDomaine() {
+
+  const theme = useTheme();
+  const navigate = useNavigate();
+
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [nDomaine, setNdomaine] = useState('');
   const [typeDm, setTypeDm] = useState('');
@@ -85,10 +113,10 @@ export default function addDomaine() {
   const [coordonneeY, setCoordonneeY] = useState('');
   const [carteTopo, setCarteTopo] = useState('');
   const [entiteAdm, setEntiteAdm] = useState(null);
-  const [geologue, setGeologue] = useState('');
+  const [geologue, setGeologue] = useState([]);
   const [substance, setSubstance] = useState([]);
   const [geos, setGeos] = useState([]);
-  // const [subs, setSubs] = useState([]);
+  const [subs, setSubs] = useState([]);
 
   useEffect(()=>{
     if(entiteAdm){
@@ -107,6 +135,22 @@ export default function addDomaine() {
     },[entiteAdm]
   )
 
+  useEffect(()=>{
+    if(entiteAdm){
+    try{
+      Axios.post('http://localhost:3000/substance/find',
+      { nomEntite : entiteAdm}
+    ).then((response)=>{
+        
+        setSubs(response.data);
+        console.log(response.data);
+      });
+    } catch(err){
+      console.log(err);
+    }
+  }
+    },[entiteAdm]
+  )
 
 
   const handleNDomaine=(e)=>{
@@ -133,36 +177,70 @@ export default function addDomaine() {
   const handleCoordY=(e)=>{
     setCoordonneeY(e.target.value);
   }
+
   const handleEntiteAdm=(e)=>{
 
     setEntiteAdm(e.target.value);
+    setGeologue([]);
+    setSubstance([]);
   }
-  const handleGeologue=(e)=>{
 
-        setGeologue(e.target.value)
+ 
+  const handleGeologue = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setGeologue(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
   };
 
-  // const handleSubstance=(e)=>{
-  //   const {
-  //     target: { value },
-  //   } = e;
-  //   setSubstance(
-  //     // On autofill we get a stringified value.
-  //     typeof value === 'string' ? value.split(',') : value,
-  //   );
-  // };
+  const handleSubstance=(event)=>{
+    const {
+      target: { value },
+    } = event;
+    setSubstance(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
 
 
+  const handleSubmitting = () => {
+    
+    try{
+     Axios.post("http://localhost:3000/domaineMin", {
+          nDomaine : nDomaine,
+          typeDm : typeDm,
+          conditionDm : conditionDm,
+          etatDm : etatDm,
+          dateInstitu : dateInstitu,
+          dateEcheance : dateEcheance, 
+          coordonnees : {
+            type : "Point",
+            coordinates : [coordonneeX,coordonneeY]
+          },
+          carteTopo : carteTopo,
+          geologue : geologue,
+          substance : substance
 
+  }).then(()=>{
+    navigate('/home',{ replace : true});
 
-  const handleSubmitting= data =>{
-    console.log(data);
-    console.log(errors);
-      
+  })
+    }
+    catch(err) {
+      console.log(err);
+      }
   }
 
+
+
   return (
-    <ThemeProvider theme={theme}>
+    <>
+    <Navbar/>
+   <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="md">
         <CssBaseline />
         <Box
@@ -177,7 +255,7 @@ export default function addDomaine() {
           <Typography component="h1" variant="h4">
             Ajouter un domaine minier
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit(handleSubmitting)} sx={{ mt: 3 }}>
+          <Box component="form" noValidate  sx={{ mt: 3 }}>
 
               
             <Grid container spacing={2}>
@@ -415,7 +493,7 @@ export default function addDomaine() {
                     name="entites"
                     value={entiteAdm}
                  
-                    {...register("entiteAdm", {required: 'Entite Adoministrative est requise'})}
+                    {...register("entiteAdm")}
                     onChange={handleEntiteAdm}
                   > 
                   {entites.map((entite)=>{
@@ -424,7 +502,7 @@ export default function addDomaine() {
                   })}
                   </RadioGroup>
                 </FormControl>
-                <Typography variant="caption"  
+                {/* <Typography variant="caption"  
                       
                     sx= {{
                         color : 'red',
@@ -435,7 +513,7 @@ export default function addDomaine() {
 
                     >
                   {errors.entiteAdm?.message}
-              </Typography>
+              </Typography> */}
               </Grid>
               
               {entiteAdm &&  
@@ -445,15 +523,16 @@ export default function addDomaine() {
                   <Select
                      labelId="geologueLabel"
                     id="geologue"
-                    defaultValue=''
+                    multiple
                     value={geologue}
-                    
+                    input={<OutlinedInput label="Geologue" />}
                     label="Condition"
+                    MenuProps={MenuProps}
                     {...register("geologue")}
                     onChange={(e)=>{
                       handleGeologue(e)}}
                   >
-                    {geos.map(g=>(<MenuItem key={g._id} value={g.nMat}>{g.nMat}</MenuItem>))}
+                    {geos.map(g=>(<MenuItem key={g._id} value={g._id} style={getStyles(g.nMat, geologue, theme)}>{g.nMat}</MenuItem>))}
                   </Select>
                 </FormControl>
                 <Typography variant="caption" 
@@ -469,23 +548,22 @@ export default function addDomaine() {
               </Typography>
               </Grid>
               }
-               {/* {entiteAdm &&  
+               {entiteAdm &&  
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel id="conditionDmLabel">Substance</InputLabel>
                   <Select
                     labelId="conditionDmLabel"
                     id="conditionDm"
+                    multiple
                     value={substance}
-                    defaultValue=""
+                    input={<OutlinedInput label="Substance" />}
                     label="Substance"
+                    MenuProps={MenuProps}
                     {...register("Substance")}
-                    onChange={handleSubstance}
+                    onChange={(e)=>{handleSubstance(e)}}
                   >
-                    {subs.map((s)=>{
-                      ( <MenuItem key={s._id}value={s.nom}>{s.nom}</MenuItem>)
-                        
-                    })}
+                    {subs.map((s=>(<MenuItem key={s._id} value={s._id} style={getStyles(s.nom, substance, theme)}>{s.nom}</MenuItem>)))}
                    
                   </Select>
                 </FormControl>
@@ -501,7 +579,7 @@ export default function addDomaine() {
                   {errors.Substance?.message}
               </Typography>
               </Grid>
-              } */}
+              }
 
               <Grid container spacing={2} ml={81}>
                       <Grid item>
@@ -517,6 +595,7 @@ export default function addDomaine() {
                         type="submit"
                         variant="contained"
                         sx={{ mt: 2, mb: 2 }}
+                        onClick={handleSubmit(handleSubmitting)}
                       >
                         Ajouter
                       </Button>
@@ -527,5 +606,6 @@ export default function addDomaine() {
         </Box>
       </Container>
     </ThemeProvider>
+    </>
   );
 }

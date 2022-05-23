@@ -39,7 +39,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(3000, ()=> console.log('Running on 3000'));
 
 
 app.use(cors());
@@ -71,5 +70,7 @@ app.use((error, req, res, next) => {
       }
     });
   });
+
+  app.listen(3000, ()=> console.log('Running on 3000'));
 
 module.exports = app;

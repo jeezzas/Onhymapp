@@ -12,19 +12,21 @@ import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from './ListItems';
+import  MainListItems  from './ListItems';
 import Chart from './MouvementPermis';
 import Deposits from './RepartissionPermis';
 import Orders from './SituationPermis';
 import { useNavigate } from "react-router-dom";
-
-
-
+import Button from '@mui/material/Button';
+import TypesChart from './TypesChart';
+import { useState, useEffect } from 'react';
+import Logout from '../Logout';
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -75,11 +77,11 @@ const mdTheme = createTheme();
 
 function DashboardContent() {
 
-
   const [open, setOpen] = React.useState(true);
+
   const navigate = useNavigate();
 
-  React.useEffect(()=>{
+  useEffect(()=>{
     if(!localStorage.getItem('@token')){
       navigate('/', { replace : true});
 
@@ -88,6 +90,8 @@ function DashboardContent() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -120,6 +124,9 @@ function DashboardContent() {
             >
               Dashboard
             </Typography>
+            <Typography variant="p" component="div" sx={{ flexGrow: 1  }} align ='right'>
+            {localStorage.getItem('Nom')} {localStorage.getItem('Prenom')}
+          </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
@@ -141,10 +148,8 @@ function DashboardContent() {
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+          <List component="nav">           
+            <MainListItems /> 
           </List>
         </Drawer>
         <Box
@@ -172,7 +177,7 @@ function DashboardContent() {
                     height: 240,
                   }}
                 >
-                  <Chart />
+                  <TypesChart/>
                 </Paper>
               </Grid>
               {/* Recent Deposits */}

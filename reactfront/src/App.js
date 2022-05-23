@@ -22,7 +22,7 @@ function App() {
             <Route exact path="/home" element={<Home/>}/>
             <Route exact path="/addDomaine" element={<AddDomaine/>}/>
             <Route exact path="/deleteDomaine" element={DeleteDomaine}/>
-            <Route exact path="/updateDomaine" element={UpdateDomaine}/>
+            <Route exact path="/updateDomaine/:id" element={UpdateDomaine}/>
             <Route exact path="/allDomaines" element={<AllDomaines/>}/>
             <Route exact path="/oneDomaine" element={OneDomaine}/>
             <Route exact path="/" element={<Login/>}/>      

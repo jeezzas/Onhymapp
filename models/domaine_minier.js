@@ -51,7 +51,7 @@ const domaineMin = new Schema({
     typeDm : {type : String, 
       required : true,
       enum: ['Permis de recherche','Licence d exploitation']}
-});
+},{ timestamps: true });
 
 const domaineMinier = mongoose.model('Domaine minier', domaineMin);
 

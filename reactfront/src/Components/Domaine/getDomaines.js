@@ -19,9 +19,11 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { ListItem, Modal } from '@mui/material';
+import {  ListItem, Modal } from '@mui/material';
 import Button from '@mui/material/Button';
-
+import Navbar from '../NavBar';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
 
 
 
@@ -49,31 +51,68 @@ export default function AllDomaines() {
 
     const [domaines, setDomaines] = useState([]);
     const [geologueList, setGeologueList] = useState([]);
+    const [substanceList, setSubstanceList] = useState([]);
     const [currentDomaine, setCurrentDomaine] = useState(null);
     const [geoItems, SetGeoItems] = useState(false);
+    const [subItems, SetSubItems] = useState(false);
+
     const [open, setOpen] = useState(false);
 
     const handleOpen = (domaine) => {
       setCurrentDomaine(domaine);
+      SetGeoItems(false);
+      SetSubItems(false);
+
       setOpen(true);
       console.log(domaine)
     }
-    const handleClose = () => {setOpen(false);
+    const handleClose = () => {
+      setOpen(false);
       setCurrentDomaine(null)}
 
-      const handleClick = () => {
-        SetGeoItems(!geoItems);
-        
+
+
+      const handleClickGeo = async(ids) => {
+        try{
+          await Axios.post('http://localhost:3000/geologue/findManyGeos', {
+            ids : ids
+        }).then((response)=>{
+              setGeologueList(response.data);
+              console.log(response.data)
+          })
+        }
+        catch(err){
+          console.log(err)
+        }
+        SetGeoItems(!geoItems);      
       };
 
+     
+      
+      const handleClickSub = async(ids) => {
+        try{
+          await Axios.post('http://localhost:3000/substance/findManySubs', {
+            ids : ids
+        }).then((response)=>{
+              setSubstanceList(response.data);
+              console.log(response.data)
+          })
+        }
+        catch(err){
+          console.log(err)
+        }
+        SetSubItems(!subItems);     
+       };
+
+     
+
+  
     useEffect(()=>{   
       try{
-        Axios.get('http://localhost:3000/domaineMin/',
-        {
-        }).then((response)=>{
+        Axios.get('http://localhost:3000/domaineMin/'
+        ).then((response)=>{
           
           setDomaines(response.data);
-          console.log(domaines);
         });
       } catch(err){
         console.log(err);
@@ -81,8 +120,23 @@ export default function AllDomaines() {
       },[]
     )
 
-  return (
+
+  return ( 
     <>
+    <CssBaseline />
+    <Navbar/> 
+    <Container component="main" maxWidth="lg">
+    <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+    <Typography component="h1" variant="h4" mb={3}>
+            Liste des domaines miniers
+          </Typography>
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
         <TableHead>
@@ -160,20 +214,38 @@ export default function AllDomaines() {
                             <Typography  color="body2" ml={1}>X = "{currentDomaine.coordonnees.coordinates[0]}" ,</Typography> 
                             <Typography  color="body2" ml={1}>Y ="{currentDomaine.coordonnees.coordinates[1]}" </Typography> 
                         </ListItem>
-                      <ListItemButton onClick={handleClick}>
+                      <ListItemButton onClick={()=>handleClickGeo(currentDomaine.geologue)}>
                         <ListItemText primary="Geologue" />
                         {geoItems ? <ExpandLess /> : <ExpandMore />}
                       </ListItemButton>
                       <Collapse in={geoItems} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding  ml={20 }>
-                            <ListItem>                      
-                            <ListItemText primary="Carte Topographique" />
-                           </ListItem>
+                        {geologueList.map(g=>( 
+                           <ListItem key={g._id} >                      
+                            <Typography  color="body1">{g.nMat} </Typography>
+                           </ListItem>))}
+                          
+                        </List>
+                      </Collapse>
+                      <ListItemButton onClick={()=>handleClickSub(currentDomaine.substance)}>
+                        <ListItemText primary="Substance" />
+                        {subItems ? <ExpandLess /> : <ExpandMore />}
+                      </ListItemButton>
+                      <Collapse in={subItems} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding  ml={20 }>
+                        {substanceList.map(s=>( 
+                           <ListItem key={s._id} >                      
+                            <Typography  color="body1">{s.nom} </Typography>
+                           </ListItem>))}
+                          
                         </List>
                       </Collapse>
                     </List>
                 </Modal>
+      
                 }
-     </>
+          </Box>
+      </Container>
+      </> 
   );
 }
